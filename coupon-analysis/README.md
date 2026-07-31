@@ -145,7 +145,7 @@ Since we examined the lowest acceptance rate which is `bar`, I want to see how w
 
 - **Ordinal Encoding and Further Feature Engineering:** Transform other categorical range strings into ordered numerical arrays to allow for statistical correlation modeling. My personal choices would be to explore a combination of `destination`, `direction` (same and opposing) and the coupon expiry columns. Another option would be to combine `weather` and `temperature` to get a proxy of season or time of year as I expect holidays and other events (e.g. Mother's and Father's Day) to drive different location categories and thus their coupon acceptance rates.
 - **Predictive Classification:** Implement a machine learning classifier (such as a Random Forest or Logistic Regression model) to automate tweaking parameters to see impacts on coupon acceptance rates
-- **Real world testingL**: Run A/B experiments to validate impact of acceptance rate tweaks and further strengthen the model
+- **Real world testing**: Run A/B experiments to validate impact of acceptance rate tweaks and further strengthen the model
 
 ## Author
 
