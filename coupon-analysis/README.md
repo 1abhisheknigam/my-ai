@@ -104,7 +104,7 @@ As mentioned above, findings in this README are an abridged version of what is i
 - **56.93%** of all coupons were accepted
 - Acceptance rate varies between different coupon categories significantly: here is the each category's share of the accepted coupons:
 
-![A Pie Chart showing the breakdown of coupon acceptance by category](outputs/coupon_acceptance_pie_chart.png)
+  ![A Pie Chart showing the breakdown of coupon acceptance by category](outputs/coupon_acceptance_pie_chart.png)
 
 - Acceptance rate was heavily influecnced by visit frequency across all categories - regular visitors were more likely to use a coupon for their coupon category of their destination
 - As the `temperature` improved, both the overall quantity of coupons and the acceptance rate increased, going from `53.7%` to √with about triple the sample size.
@@ -135,11 +135,13 @@ Since we examined the lowest acceptance rate which is `bar`, I want to see how w
 2. Target mid-to-higher-income brackets if they have never gone to that restaurant before, capturing the 'aspirational spender' looking to try a premium spot with low financial risk. Acceptance levels here range in `60`-`70%`. However, there is no point pursuing high-income "never-goers".
 3. Get the coupons out earlier in the day across all categories. However, for last-minute plans, target `Singles` as they may go out by themselves or with friends. If we could somehow target friend groups live, that would be good as well to boost late-night acceptances.
 
+   ![A Line and Scatterplot showing Acceptance Rate by Time of Day and Passenger type ](outputs/coupon_acceptance_restaurants_time_by_passenger.png)
+
    - For families and married couples, the perfect time seems to fall between `10AM` and `2PM`, with acceptance rate rising to `80%`. This may also benefit the other categories so we should explore that as well who did not get a chance to receive earlier in the day coupons based on the provided data. We can also save ourselves frome expending energy sending coupons for married and family categories past `6PM`; single and friend groups on the other hand stay steady, close to the baseline acceptance rate, with the lowest being `38%`.
 
 ## Next Steps
 
-- **Ordinal Encoding and Further Feature Engineering:** Transform other categorical range strings into ordered numerical arrays to allow for statistical correlation modeling. My personal choices would be to explore a combination of `destination`, `direction` (same and opposing) and the coupon expiry columns.
+- **Ordinal Encoding and Further Feature Engineering:** Transform other categorical range strings into ordered numerical arrays to allow for statistical correlation modeling. My personal choices would be to explore a combination of `destination`, `direction` (same and opposing) and the coupon expiry columns. Another option would be to combine `weather` and `temperature` to get a proxy of season or time of year as I expect holidays and other events (e.g. Mother's and Father's Day) to drive different location categories and thus their coupon acceptance rates.
 - **Predictive Classification:** Implement a machine learning classifier (such as a Random Forest or Logistic Regression model) to automate tweaking parameters to see impacts on coupon acceptance rates
 - **Real world testingL**: Run A/B experiments to validate impact of acceptance rate tweaks and further strengthen the model
 
