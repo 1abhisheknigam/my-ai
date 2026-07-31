@@ -19,10 +19,10 @@ The final findings serve not only as providing context for coupon acceptance, bu
 ```
 ├── data/
 │   └── coupons.csv               # Raw dataset
-├── data/                         # Copies of visualizations
+├── notebooks/
+│   └── coupon_analysis.ipynb     # Jupyter notebook
+├── outputs/                      # Copies of visualizations
 │   └── *.png
-├── notebooks/                    # Copies of visualizations
-│   └── coupon_analysis.ipynb     # Jupyter notebook    
 └──README.md                      # You are here!
 ```
 
