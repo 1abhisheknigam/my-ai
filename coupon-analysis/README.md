@@ -93,6 +93,8 @@ Before jumping into data analysis, a first-pass of the 12,684 records was done t
 
     It is odd that for the `car` column, there is no `car` value; in fact, the results seem to indicate that these are all non-cars or in the last case, cars that do not have "Onstar". Looking up this company at https://www.onstar.com/ shows connected vehicles service. It is safe to assume then, that the null values are just various types of cars that may have been removed for anonymity or some other reason e.g. the question may have been "indicate mode of transport if you don't use an OnStar car". I feel comfortable filling these values with just "car".
 
+    This decision ends up paying off directly as one of our later analyses depends on types of drivers, and any analysis would be grossly inaccurate if the data was simply stripped.
+
 ---
 
 ## Key Findings by Core Problems
