@@ -58,7 +58,7 @@ An initial investigation of the 12,684 records revealed several columns with mis
 - **56.93%** of all coupons were accepted
 - Acceptance rate varies between different coupon categories significantly: here is the each category's share of the accepted coupons:
 
-![A Pie Chart showing the breakdown of coupon acceptance by category](images/coupon_acceptance_pie_chart.png)
+![A Pie Chart showing the breakdown of coupon acceptance by category](outputs/coupon_acceptance_pie_chart.png)
 
 - Acceptance rate was heavily influecnced by visit frequency across all categories - regular visitors were more likely to use a coupon for their coupon category of their destination
 
