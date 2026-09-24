@@ -71,7 +71,15 @@ To determine the optimal pricing engine, I systematically trained and evaluated 
 | **Ridge Regression** | Full pipeline (139 features) | α = 1000.0 | \$4,802.15 | \$6,854.80 | 0.7511 |
 | **Lasso Regression (Selected)** | **Full pipeline (139 features)** | **α = 0.1 (5-Fold CV)** | **\$4,789.26** | **\$6,838.45** | **0.7529** |
 
+Across the full feature set (139 features), the performance metrics of the regularized techniques and the baseline model remain remarkably tight and uniform. The optimized **Lasso Regression** ($\alpha = 0.1$) marginally leads with an $R^2 = 0.7529$, closely mirrored by **Ridge Regression** variations ($\alpha = 1.0$ to $100.0$) ranging between $0.7521$ and $0.7525$, and the **Full OLS Baseline** at $0.7495$. This minimal variance indicates that adding regularized penalty parameters yields only fractional predictive gains, though all full-pipeline configurations fundamentally outperform the restricted baseline polynomial models ($R^2 \le 0.3917$).
+
+### Selected Model - Lasso
+
 I selected **Lasso Regression ($(\alpha=0.1)$)** as the production engine. The model accounts for **\(75.3\%\) of market variance ($(R^2 = 0.7529)$, $(\text{MAE} \approx \pm \$4,789)$)** while pruning 7 redundant features and anchoring the pricing engine to an honest, realistic **\(\$16,558\) baseline intercept** (eliminating the \(\$26,000+\) baseline inflation found in standard OLS).
+
+![Lasso Plot](images/plots/phase4_line_lasso_price_predict_vs_actual.png)
+
+Plotting actual versus predicted prices across a random sample of 100 test vehicles sorted by actual value shows tight tracking across the core \(\$10,000\) to \(\$35,000\) mid-market.
 
 ### Data Preparation & Exploratory Analysis
 
@@ -114,3 +122,35 @@ To determine which categorical levels provided genuine predictive signal versus 
 - **Engine Displacement & Fuel Type:** High-utility powertrains command strong positive adjustments, with **Diesel fuel adding \(+\$13.6\text{k}\)** and **$12$-cylinder engines adding \(+\$14.7\text{k}\)**. Conversely, economy engines face structural valuation penalties (**$3$-cylinders at \(-\$9.2\text{k}\)**; **$4$-cylinders at \(-\$5.3\text{k}\)**).
 - **Title Risk:** Severe structural history (`title_status_salvage`) drives an immediate baseline write-down of **\(-\$2.8\text{k}\)**.
 
+### Non-Linear Depreciation
+
+Touch upon above in the degree 2 chart, the depreciation is fundamentally non-linear: calendar age degrades asset value at a rate $2.1\times$ to $2.7\times$ faster than each $10,000\text{-mile}$ usage increment.
+
+Here are some car profiles I genereated to explain the numerical impacts for dealerships:
+
+| Vehicle Segment | Age | Mileage | Dollar Decay (/Year) | Dollar Decay (/10k Mi) | Operational Dealership Strategy |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Late-Model (Standard)** | 4 yrs | 36,000 mi | $-\$2,536.76$ | $-\$947.83$ | Steepest early decay; enforce aggressive turn rates ($<30$ days) to avoid holding losses. |
+| **Mid-Lifespan (Standard)** | 8 yrs | 80,000 mi | $-\$2,032.92$ | $-\$810.03$ | Core retail sweet spot; steady, predictable depreciation and consistent turn margins. |
+| **Budget / Aged** | 14 yrs | 140,000 mi | $-\$1,296.67$ | $-\$604.38$ | Approaching scrap floor; annualized decay rate slows by nearly half compared to late-model stock. |
+| **Low-Mileage Weekend Car** | 12 yrs | 45,000 mi | $-\$1,786.01$ | $-\$686.07$ | Low mileage cushions value, but age decay still outpaces odometer wear by over $2.5:1$. |
+| **High-Mileage Commuter** | 4 yrs | 90,000 mi | $-\$2,361.14$ | $-\$938.37$ | Heavy mileage compounding on a fresh chassis; bid conservatively on acquisition trade-ins. |
+
+### Limitations
+
+#### Negative Boundary
+
+Linear arithmetic can drive heavily depreciated, end-of-life cars into negative territory (down to $(-\$15,245\)$ on high-mileage vehicles). 
+
+To get around this, dealerships should:
+
+- set a floor value or
+- route to an experienced human appraiser whenever inventory triggers any of the following boundary rules:
+    -   **Vehicle Age:** $>18\text{ years}$
+    -   **Odometer:** $>175,000\text{ miles}$
+    -   **Title Status:** Branded, rebuilt, or salvage title
+    -   **Exotic Vehicles:** Super-luxury makes where market values exceed $\$50,000$ and linear models artificially compress price ceilings.
+
+### Conclusion
+
+By using this model, dealerships can set reliable prices, protects them from buying overvalued cars, and directly increases profits.
