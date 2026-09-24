@@ -128,14 +128,14 @@ Touch upon above in the degree 2 chart, the depreciation is fundamentally non-li
 
 Here are some car profiles I genereated to explain the numerical impacts for dealerships:
 
+
 | Vehicle Segment | Age | Mileage | Dollar Decay (/Year) | Dollar Decay (/10k Mi) | Operational Dealership Strategy |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Late-Model (Standard)** | 4 yrs | 36,000 mi | $-\$2,536.76$ | $-\$947.83$ | Steepest early decay; enforce aggressive turn rates ($<30$ days) to avoid holding losses. |
-| **Mid-Lifespan (Standard)** | 8 yrs | 80,000 mi | $-\$2,032.92$ | $-\$810.03$ | Core retail sweet spot; steady, predictable depreciation and consistent turn margins. |
-| **Budget / Aged** | 14 yrs | 140,000 mi | $-\$1,296.67$ | $-\$604.38$ | Approaching scrap floor; annualized decay rate slows by nearly half compared to late-model stock. |
-| **Low-Mileage Weekend Car** | 12 yrs | 45,000 mi | $-\$1,786.01$ | $-\$686.07$ | Low mileage cushions value, but age decay still outpaces odometer wear by over $2.5:1$. |
-| **High-Mileage Commuter** | 4 yrs | 90,000 mi | $-\$2,361.14$ | $-\$938.37$ | Heavy mileage compounding on a fresh chassis; bid conservatively on acquisition trade-ins. |
-
+| **Late-Model (Standard)** | 4 yrs | 36,000 mi | -\$2,536.76 | -\$947.83 | Steepest early decay; enforce aggressive turn rates (<30 days) to avoid holding losses. |
+| **Mid-Lifespan (Standard)** | 8 yrs | 80,000 mi | -\$2,032.92 | -\$810.03 | Core retail sweet spot; steady, predictable depreciation and consistent turn margins. |
+| **Budget / Aged** | 14 yrs | 140,000 mi | -\$1,296.67 | -\$604.38 | Approaching scrap floor; annualized decay rate slows by nearly half compared to late-model stock. |
+| **Low-Mileage Weekend Car** | 12 yrs | 45,000 mi | -\$1,786.01 | -\$686.07 | Low mileage cushions value, but age decay still outpaces odometer wear by over 2.5:1. |
+| **High-Mileage Commuter** | 4 yrs | 90,000 mi | -\$2,361.14 | -\$938.37 | Heavy mileage compounding on a fresh chassis; bid conservatively on acquisition trade-ins. |
 
 ### Limitations
 
