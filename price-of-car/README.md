@@ -75,7 +75,7 @@ Across the full feature set (139 features), the performance metrics of the regul
 
 ### Selected Model - Lasso
 
-I selected **Lasso Regression ($(\alpha=0.1)$)** as the production engine. The model accounts for **\(75.3\%\) of market variance ($(R^2 = 0.7529)$, $(\text{MAE} \approx \pm \$4,789)$)** while pruning 7 redundant features and anchoring the pricing engine to an honest, realistic **\(\$16,558\) baseline intercept** (eliminating the \(\$26,000+\) baseline inflation found in standard OLS).
+I selected Lasso Regression ($\alpha = 0.1$) as the production engine. The model accounts for $75.3\%$ of market variance ($R^2 = 0.7529$, $\text{MAE} \approx \pm \$4,789$) while pruning 7 redundant features and anchoring the pricing engine to an honest, realistic $\$16,558$ baseline intercept (eliminating the $\$26,000+$ baseline inflation found in standard OLS).
 
 ![Lasso Plot](images/plots/phase4_line_lasso_price_predict_vs_actual.png)
 
@@ -118,9 +118,9 @@ To determine which categorical levels provided genuine predictive signal versus 
 
 ![Coefficient Breakdown Image](images/plots/phase4_rank_plot_all_model_coefficients_full_color.png)
 
-- **Manufacturer Badges:** Significant baseline premiums reward luxury and performance marques—such as **Ferrari (\(+\$109.7\text{k}\))**, **Aston Martin (\(+\$21.2\text{k}\))**, and **Tesla (\(+\$16.8\text{k}\))**—while budget makes reflect market-wide discounts, including **Mitsubishi (\(-\$6.3\text{k}\))**.
-- **Engine Displacement & Fuel Type:** High-utility powertrains command strong positive adjustments, with **Diesel fuel adding \(+\$13.6\text{k}\)** and **$12$-cylinder engines adding \(+\$14.7\text{k}\)**. Conversely, economy engines face structural valuation penalties (**$3$-cylinders at \(-\$9.2\text{k}\)**; **$4$-cylinders at \(-\$5.3\text{k}\)**).
-- **Title Risk:** Severe structural history (`title_status_salvage`) drives an immediate baseline write-down of **\(-\$2.8\text{k}\)**.
+- **Manufacturer Badges:** Significant baseline premiums reward luxury and performance marques—such as **Ferrari (+\$109.7k)**, **Aston Martin (+\$21.2k)**, and **Tesla (+\$16.8k)**—while budget makes reflect market-wide discounts, including **Mitsubishi (-\$6.3k)**.
+- **Engine Displacement & Fuel Type:** High-utility powertrains command strong positive adjustments, with **Diesel fuel adding +\$13.6k** and **12-cylinder engines adding +\$14.7k**. Conversely, economy engines face structural valuation penalties (**3-cylinders at -\$9.2k**; **4-cylinders at -\$5.3k**).
+- **Title Risk:** Severe structural history (`title_status_salvage`) drives an immediate baseline write-down of **-\$2.8k**.
 
 ### Non-Linear Depreciation
 
@@ -141,7 +141,7 @@ Here are some car profiles I genereated to explain the numerical impacts for dea
 
 #### Negative Boundary
 
-Linear arithmetic can drive heavily depreciated, end-of-life cars into negative territory (down to $(-\$15,245\)$ on high-mileage vehicles). 
+Linear arithmetic can drive heavily depreciated, end-of-life cars into negative territory (down to -\$15,245 on high-mileage vehicles).
 
 To get around this, dealerships should:
 
