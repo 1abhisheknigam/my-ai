@@ -2,8 +2,7 @@
 
 ## Overview
 
-This repository delivers the complete predictive modeling and analytical pipeline for **Required Assignment 11.1: What Drives the Price of a Car?**  
-My objective is to identify the underlying macroeconomic and vehicle-specific drivers of used-car prices and build a reliable, regularized regression engine to power automated trade-in appraisals and inventory acquisition strategies.
+My objective is to identify the underlying macroeconomic and vehicle-specific drivers of used-car prices and build a reliable, regularized regression engine to power automated trade-in appraisals and inventory acquisition strategies. This repository delivers the complete predictive modeling and analytical pipeline for this purpose.
 
 Following the structured CRISP-DM framework, I processed over $426,000$ raw market listings, engineered polynomial depreciation features, benchmarked 11 model variations (OLS, Ridge, and Lasso), and diagnosed real-world boundary conditions to formulate actionable operational guardrails.
 
