@@ -136,6 +136,7 @@ Here are some car profiles I genereated to explain the numerical impacts for dea
 | **Low-Mileage Weekend Car** | 12 yrs | 45,000 mi | $-\$1,786.01$ | $-\$686.07$ | Low mileage cushions value, but age decay still outpaces odometer wear by over $2.5:1$. |
 | **High-Mileage Commuter** | 4 yrs | 90,000 mi | $-\$2,361.14$ | $-\$938.37$ | Heavy mileage compounding on a fresh chassis; bid conservatively on acquisition trade-ins. |
 
+
 ### Limitations
 
 #### Negative Boundary
