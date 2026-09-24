@@ -57,19 +57,19 @@ My objective was to replace subjective appraisal guesswork with hard, lot-action
 
 To determine the optimal pricing engine, I systematically trained and evaluated 11 candidate regression architectures, progressing from baseline continuous polynomials to fully regularized high-dimensional feature spaces:
 
-| Model Configuration | Feature Set / Complexity | Hyperparameter (\(\alpha\)) | Test MAE | Test RMSE | Test \(R^2\) |
+| Model Configuration | Feature Set / Complexity | Hyperparameter (α) | Test MAE | Test RMSE | Test R² |
 | :--- | :--- | :--- | :---: | :---: | :---: |
-| **OLS Polynomial Deg 1** | Continuous features (Age, Odo) | — | \(\$8,912.40\) | \(\$11,780.12\) | $0.3412$ |
-| **OLS Polynomial Deg 2** | Continuous features (Age, Odo) | — | \(\$8,542.18\) | \(\$11,350.45\) | $0.3884$ |
-| **OLS Polynomial Deg 3** | Continuous features (Age, Odo) | — | \(\$8,520.10\) | \(\$11,328.60\) | $0.3907$ |
-| **OLS Polynomial Deg 4** | Continuous features (Age, Odo) | — | \(\$8,515.44\) | \(\$11,320.18\) | $0.3916$ |
-| **OLS Polynomial Deg 5** | Continuous features (Age, Odo) | — | \(\$8,514.80\) | \(\$11,319.50\) | $0.3917$ |
-| **Full OLS Baseline** | Full pipeline (139 features) | — | \(\$4,812.30\) | \(\$6,890.15\) | $0.7495$ |
-| **Ridge Regression** | Full pipeline (139 features) | \(\alpha = 1.0\) | \(\$4,795.12\) | \(\$6,845.20\) | $0.7521$ |
-| **Ridge Regression** | Full pipeline (139 features) | \(\alpha = 10.0\) | \(\$4,793.05\) | \(\$6,843.50\) | $0.7523$ |
-| **Ridge Regression** | Full pipeline (139 features) | \(\alpha = 100.0\) | \(\$4,791.40\) | \(\$6,842.10\) | $0.7525$ |
-| **Ridge Regression** | Full pipeline (139 features) | \(\alpha = 1000.0\) | \(\$4,802.15\) | \(\$6,854.80\) | $0.7511$ |
-| **Lasso Regression (Selected)** | **Full pipeline (139 features)** | **\(\alpha = 0.1\) (5-Fold CV)** | **\(\$4,789.26\)** | **\(\$6,838.45\)** | **$0.7529$** |
+| **OLS Polynomial Deg 1** | Continuous features (Age, Odo) | — | \$8,912.40 | \$11,780.12 | 0.3412 |
+| **OLS Polynomial Deg 2** | Continuous features (Age, Odo) | — | \$8,542.18 | \$11,350.45 | 0.3884 |
+| **OLS Polynomial Deg 3** | Continuous features (Age, Odo) | — | \$8,520.10 | \$11,328.60 | 0.3907 |
+| **OLS Polynomial Deg 4** | Continuous features (Age, Odo) | — | \$8,515.44 | \$11,320.18 | 0.3916 |
+| **OLS Polynomial Deg 5** | Continuous features (Age, Odo) | — | \$8,514.80 | \$11,319.50 | 0.3917 |
+| **Full OLS Baseline** | Full pipeline (139 features) | — | \$4,812.30 | \$6,890.15 | 0.7495 |
+| **Ridge Regression** | Full pipeline (139 features) | α = 1.0 | \$4,795.12 | \$6,845.20 | 0.7521 |
+| **Ridge Regression** | Full pipeline (139 features) | α = 10.0 | \$4,793.05 | \$6,843.50 | 0.7523 |
+| **Ridge Regression** | Full pipeline (139 features) | α = 100.0 | \$4,791.40 | \$6,842.10 | 0.7525 |
+| **Ridge Regression** | Full pipeline (139 features) | α = 1000.0 | \$4,802.15 | \$6,854.80 | 0.7511 |
+| **Lasso Regression (Selected)** | **Full pipeline (139 features)** | **α = 0.1 (5-Fold CV)** | **\$4,789.26** | **\$6,838.45** | **0.7529** |
 
 I selected **Lasso Regression ($(\alpha=0.1)$)** as the production engine. The model accounts for **\(75.3\%\) of market variance ($(R^2 = 0.7529)$, $(\text{MAE} \approx \pm \$4,789)$)** while pruning 7 redundant features and anchoring the pricing engine to an honest, realistic **\(\$16,558\) baseline intercept** (eliminating the \(\$26,000+\) baseline inflation found in standard OLS).
 
