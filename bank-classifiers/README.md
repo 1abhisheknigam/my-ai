@@ -80,6 +80,20 @@ What's Included:
 
    - This notebook can also be run in specfic phases by loading the relevant notebooks. If running from top to bottom, these saving and loading cells can be skipped by commenting out.
 
+> [!WARNING]
+> **Runtime & Compute Alert:**  
+> Training non-linear classifiers across 40,000+ records—particularly exhaustive hyperparameter tuning with `GridSearchCV` on SVM (`T4`) and KNN (`T3`)—requires significant execution time. Full sequential re-training can take upwards of 15–30+ minutes depending on your hardware environment. For transparency, actual fitting and search runtimes are explicitly tracked and displayed in the benchmark tables.
+> 
+> To monitor live execution and prevent silent background hangs during prolonged cross-validation loops, the tuning harness integrates the **`rich`** library with interactive console status spinners:
+>
+> <div align="center">
+>
+> ![GridSearchCV Live Rich Progress](images/gridsearch_progress_rich.png)
+> 
+> </div>
+>
+> Again: If re-training is not required, use the checkpointed model artifacts (`.joblib`) located in `data/output/models/` for near-instant inference and evaluation.*
+
 ## Business Value & Outreach Strategy
 
 ### Executive Overview & Impact
