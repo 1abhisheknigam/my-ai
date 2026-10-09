@@ -92,7 +92,7 @@ What's Included:
 > 
 > </div>
 >
-> Again: If re-training is not required, use the checkpointed model artifacts (`.joblib`) located in `data/output/models/` for near-instant inference and evaluation.*
+> *Again: If re-training is not required, use the checkpointed model artifacts (`.joblib`) located in `data/output/models/` for near-instant inference and evaluation.*
 
 ## Business Value & Outreach Strategy
 
