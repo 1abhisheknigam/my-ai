@@ -16,8 +16,9 @@ Following the structured CRISP-DM framework, I analyzed 41,188 client records fr
 
 ## Notebook
 
-- *Main Analysis & Production Notebook:**  
-[`notebooks/bank_classifiers.ipynb`](./notebooks/bank_classifiers.ipynb)
+### *Main Analysis & Production Notebook*  
+
+&emsp;&emsp;[`notebooks/bank_classifiers.ipynb`](./notebooks/bank_classifiers.ipynb)
 
 What's Included:
 
@@ -42,10 +43,12 @@ What's Included:
 │   ├── bank-additional.csv             # 10% sample dataset (4,119 records)
 │   ├── bank-additional-names.txt       # UCI feature dictionary and background metadata
 │   └── output/
-│       └── dataframes/                 # Checkpointed Parquet datasets across all pipeline phases
+│       ├── dataframes/                 # Checkpointed Parquet datasets across all pipeline phases (p3–p11)
+│       └── models/                     # Serialized pipelines, preprocessors, and ROC artifacts (.joblib)
 └── images/
     ├── bank_marketing_cover.png        # Executive repository header visual
-    └── CRISP-DM-BANK.pdf               # CRISP-DM process mapping documentation
+    ├── CRISP-DM-BANK.pdf               # CRISP-DM process mapping documentation
+    └── plots/                          # Diagnostic figures (ROC curves, tuning deltas, coefficient bars)
 ```
 
 ## Running the Notebook
