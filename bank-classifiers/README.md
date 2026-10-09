@@ -173,6 +173,7 @@ To make regression parameters actionable for non-technical stakeholders, log-odd
 ### 1. Campaign Seasonality & Timing (Highest Magnitude Driver)
 
 - **March Contacts:** Outreach in March produces the largest positive swing, lifting predicted conversion by **+11.0 percentage points** (up to **22.3%**).
+   - Could this be related to Taxation seasonality? Based on a superficial read at [portugaltaxes.pt](https://portugaltaxes.pt/2025-irs-deadlines-to-meet-in-2026/), March is typically a time for expense review, entity allocation (including **tax refunds**) and documentation gathering before the tax submission season starts in April.
 - **May Contacts:** Reaching customers in May suppresses predicted conversion by **-5.1 percentage points** (down to **6.2%**). Prospects contacted in March convert at more than 3.5x the rate of May contacts.
 
 ### 2. Macroeconomic Climate (Systemic Background Anchor)
