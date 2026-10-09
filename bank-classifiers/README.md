@@ -1,4 +1,4 @@
-# Bank Telemarketing Classification & Propensity Engine
+# Comparing Classifier Models through a Bank Marketing Campaign
 
 ## Overview
 
