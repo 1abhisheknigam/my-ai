@@ -1,3 +1,6 @@
+# --- Local Drafts & Specific Intermediate Files ---
+docs/01_problem_scoping.pdf
+
 # --- Python & Environment Artifacts ---
 __pycache__/
 *.py[cod]
