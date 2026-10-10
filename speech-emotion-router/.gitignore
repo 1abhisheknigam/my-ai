@@ -1,0 +1,21 @@
+# --- Python & Environment Artifacts ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# --- Jupyter Notebook Checkpoints ---
+.ipynb_checkpoints/
+
+# --- Operating System Files ---
+.DS_Store
+Thumbs.db
+
+# --- Project Outputs & Processed Data ---
+outputs/
+data/processed/
+
+# --- Audio Files & Raw Datasets ---
+data/raw/*.wav
+data/raw/**/*.wav
