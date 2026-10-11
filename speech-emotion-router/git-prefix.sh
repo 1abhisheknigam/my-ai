@@ -17,13 +17,15 @@
 #   ./git-prefix.sh on
 # ==============================================================================
 
-HOOK_FILE=".git/hooks/prepare-commit-msg"
+# Locate the actual Git directory regardless of current working directory or submodules
+GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
 
-# Ensure we are inside a Git repository
-if [ ! -d ".git" ]; then
-    echo "Error: Must be run from the root of a Git repository."
+if [ -z "$GIT_DIR" ]; then
+    echo "Error: Must be run inside a Git repository."
     exit 1
 fi
+
+HOOK_FILE="$GIT_DIR/hooks/prepare-commit-msg"
 
 # Ensure hook file exists and is configured
 ensure_hook_installed() {
@@ -43,9 +45,9 @@ if [ -z "$PREFIX" ]; then
     exit 0
 fi
 
-if [ -z "$COMMIT_SOURCE" ] \vert{}\vert{} [ "$COMMIT_SOURCE" = "message" ]; then
+if [ -z "$COMMIT_SOURCE" ] || [ "$COMMIT_SOURCE" = "message" ]; then
     if ! grep -qF "$PREFIX" "$COMMIT_MSG_FILE"; then
-        sed -i.bak -e "1s|^|$PREFIX\vert{}" "$COMMIT_MSG_FILE"
+        sed -i.bak -e "1s|^|$PREFIX|" "$COMMIT_MSG_FILE"
         rm -f "${COMMIT_MSG_FILE}.bak"
     fi
 fi
@@ -72,3 +74,27 @@ case "$1" in
         if [ -z "$CURRENT_PREFIX" ]; then
             echo "Error: No prefix currently set. Run './git-prefix.sh set \"<prefix>\"' first."
             exit 1
+        fi
+        git config custom.prefix.enabled true
+        echo "Prefix enabled: \"$CURRENT_PREFIX\""
+        ;;
+    off|disable)
+        git config custom.prefix.enabled false
+        echo "Prefix disabled."
+        ;;
+    status)
+        ENABLED=$(git config --bool --get custom.prefix.enabled 2>/dev/null)
+        PREFIX=$(git config --get custom.prefix.value 2>/dev/null)
+        echo "Enabled: ${ENABLED:-false}"
+        echo "Prefix:  ${PREFIX:-(none)}"
+        ;;
+    *)
+        echo "Usage: ./git-prefix.sh {set <prefix>|on|off|status}"
+        echo "Examples:"
+        echo "  ./git-prefix.sh set \"[SER] 01_eda: \""
+        echo "  ./git-prefix.sh off"
+        echo "  ./git-prefix.sh on"
+        echo "  ./git-prefix.sh status"
+        exit 1
+        ;;
+esac
