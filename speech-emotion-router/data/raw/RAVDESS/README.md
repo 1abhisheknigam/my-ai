@@ -1,6 +1,8 @@
 # RAVDESS Dataset Overview & Structure
 
-This directory is reserved for the **RAVDESS** (Ryerson Audio-Visual Database of Emotional Speech and Song) audio-only speech dataset. Specifically, this project utilizes the **Audio Speech Files (Actors 01–24)** package, which contains 1,440 audio-only speech trials (60 trials per actor across 24 actors). Due to storage size and version control best practices, raw `.wav` audio files are excluded from git tracking.
+This directory is reserved for the **RAVDESS** (Ryerson Audio-Visual Database of Emotional Speech and Song) audio-only speech dataset. Specifically, this project utilizes the **Audio Speech Files (Actors 01–24)** package, which contains 1,440 audio-only speech trials (60 trials per actor across 24 actors).
+
+Due to storage size and version control best practices, raw `.wav` audio files are excluded from git tracking.
 
 ## Dataset Source & Direct Download
 
@@ -12,6 +14,8 @@ This directory is reserved for the **RAVDESS** (Ryerson Audio-Visual Database of
 ---
 
 ## File Naming Convention
+
+(Taken directly from the Repository Link above)
 
 Each of the 1,440 RAVDESS audio files has a unique filename consisting of a 7-part numerical identifier (e.g., `03-01-05-01-01-01-01.wav`) that defines the stimulus characteristics of the recording.
 
