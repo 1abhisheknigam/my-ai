@@ -15,8 +15,9 @@ speech-emotion-router/
 
 ## Data Attribution & References
 
-This project utilizes the **CREMA-D** (Crowd-sourced Emotional Multimodal Actors Dataset) for audio feature extraction and emotional state modeling.
+This project utilizes the **RAVDESS** (Ryerson Audio-Visual Database of Emotional Speech and Song) audio-only speech files (Actors 01–24, encompassing 1,440 speech trials) focusing on North American English vocal expressions.
 
-* **Dataset Source:** [Kaggle CREMA-D Repository (ejlok1 mirror)](https://www.kaggle.com/datasets/ejlok1/cremad)
-* **Original Publication:**
-  Cao, H., Cooper, D. G., Keutmann, M. K., Gur,. R. C., Nenkova, A., & Verma, R. (2014). CREMA-D: Crowd-sourced Emotional Multimodal Actors Dataset. *IEEE Transactions on Affective Computing*, 5(4), 377–390.
+* **Dataset Source & Repository:** [RAVDESS Zenodo Record](https://zenodo.org/records/1188976)
+* **Academic Publication Citation:**
+  Livingstone, S. R., & Russo, F. A. (2018). The Ryerson Audio-Visual Database of Emotional Speech and Song (RAVDESS): A dynamic, multimodal set of facial and vocal expressions in North American English. *PLoS ONE*, 13(5), e0196391. [https://doi.org/10.1371/journal.pone.0196391](https://doi.org/10.1371/journal.pone.0196391)
+  
