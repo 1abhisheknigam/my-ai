@@ -70,7 +70,9 @@ To set up your local development environment for exploratory data analysis and b
       scikit-learn \
       librosa \
       soundfile \
-      ipykernel
+      ipykernel \
+      pyarrow \
+      fastparquet
     ```
 
 5. **Launch Jupyter Lab or VS Code:**
