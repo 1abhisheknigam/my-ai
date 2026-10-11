@@ -19,13 +19,30 @@ capstone-project/
 
 To set up your local development environment for exploratory data analysis and baseline modeling, navigate to your project root directory and follow these steps:
 
-1. **Create the Virtual Environment:**
+1. **System Requirements & Homebrew:**
+    This project targets **Python 3.11+** installed via [Homebrew](https://brew.sh/) to ensure compatibility with modern audio processing and machine learning libraries.
+
+    Ensure Homebrew binaries and Python 3.11 are prioritized in your shell path (e.g., `~/.bash_profile`):
+
+    ```bash
+    # Prioritize Homebrew and Python 3.11 binaries
+    export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+    export PATH="/opt/homebrew/opt/python@3.11/libexec/bin:$PATH"
+    ```
+
+    Verify the environment:
+
+    ```bash
+    python3 --version  # Should output Python 3.11.x
+    ```
+
+2. **Create the Virtual Environment:**
 
     ```bash
       python3 -m venv .venv
     ```
 
-2. **Activate the Virtual Environment:**
+3. **Activate the Virtual Environment:**
 
    * On macOS / Linux:
 
@@ -39,15 +56,26 @@ To set up your local development environment for exploratory data analysis and b
      .venv\Scripts\activate
      ```
 
-3. **Install Dependencies:**
+4. **Install Dependencies:**
+
+    Upgrade pip and install all necessary dependencies, including `ipykernel` for VS Code Jupyter notebook execution:
 
     ```bash
-      pip install numpy pandas librosa scikit-learn matplotlib seaborn soundfile
+    pip install --upgrade pip
+    pip install \
+      numpy \
+      pandas \
+      matplotlib \
+      seaborn \
+      scikit-learn \
+      librosa \
+      soundfile \
+      ipykernel
     ```
 
-4. **Launch Jupyter Lab or VS Code:**
+5. **Launch Jupyter Lab or VS Code:**
 
-    Open your project directory in VS Code, ensure your notebook kernel is set to your `.venv` interpreter, and execute your notebooks inside the notebooks/ directory.
+    Open your project directory in VS Code, ensure your notebook kernel is set to your `.venv` interpreter, and execute your notebooks inside the `notebooks/` directory.
 
 ## Data Attribution & References
 

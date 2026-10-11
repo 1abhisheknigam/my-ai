@@ -15,9 +15,8 @@ venv/
 .DS_Store
 Thumbs.db
 
-# --- Project Outputs & Processed Data ---
+# --- Project Outputs ---
 outputs/
-data/processed/
 
 # --- Audio Files & Raw Datasets ---
 data/raw/*.wav
