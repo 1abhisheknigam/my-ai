@@ -13,3 +13,10 @@ speech-emotion-router/
 └── README.md        # Project entry point and data dictionary
 ```
 
+## Data Attribution & References
+
+This project utilizes the **CREMA-D** (Crowd-sourced Emotional Multimodal Actors Dataset) for audio feature extraction and emotional state modeling.
+
+* **Dataset Source:** [Kaggle CREMA-D Repository (ejlok1 mirror)](https://www.kaggle.com/datasets/ejlok1/cremad)
+* **Original Publication:**
+  Cao, H., Cooper, D. G., Keutmann, M. K., Gur,. R. C., Nenkova, A., & Verma, R. (2014). CREMA-D: Crowd-sourced Emotional Multimodal Actors Dataset. *IEEE Transactions on Affective Computing*, 5(4), 377–390.
