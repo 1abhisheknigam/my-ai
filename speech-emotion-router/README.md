@@ -378,6 +378,37 @@ RBF-SVC delivered the benchmark champion at **43.13%**, proving that 26-dimensio
 
 Now, it is time to turn from 1D static descriptors to 2D time-frequency representations (Log-Mel spectrograms) capable of preserving both spectral harmonics and temporal duration, to try and break that 44% barrier.
 
+## Phase 4: Spectral Representation & 2D Tensor Engineering
+
+To overcome the temporal compression of static MFCC averages, Phase 4 executed a **second, dedicated feature extraction pipeline**, transitioning from tabular summary statistics to spatial time-frequency representations tailored for 2D convolutional networks. This phase still relied on features of the data identified from the EDA phase, but now for a new kind of input.
+
+### Spectrogram Parameterization Grounded in Literature
+
+Synthesizing foundational audio processing literature and speech classification benchmarks ([Huang et al., 2001; Schuller, 2018; Livingstone & Russo, 2018]), raw audio waveforms were converted into uniform Log-Mel spectrogram arrays:
+
+- **Time-Frequency Resolution:** Signals were transformed using Short-Time Fourier Transform (STFT) with an $N_{\text{FFT}}$ window of 2,048 samples (~93 ms at 22,050 Hz) and a hop length of 512 samples (~23 ms step), balancing overtone frequency resolution against temporal articulation tracking.
+- **Mel-Scale Filterbanks:** Projected across 128 non-linearly spaced triangular filterbanks from 0 Hz to Nyquist (11,025 Hz), mimicking human cochlear frequency perception.
+- **Logarithmic Compression:** Transformed to decibels ($10 \cdot \log_{10}(S / S_{\text{ref}})$) with dynamic range bounded at $-80\text{ dB}$ relative to peak power.
+
+### Acoustic Validation: Preserving Dynamic Geometry
+
+Unlike static MFCC summaries, 2D Log-Mel spectrograms directly preserve the visual acoustic signatures separating affective extremes:
+
+<figure align="center">
+  <img src="outputs/plots/04_mel_spectrogram.png" alt="Acoustic Validation: Temporal Energy & Formants Across Affective Extremes" width="850">
+  <figcaption><em>Fig: Visual comparison of 128x128 Log-Mel spectrograms for calm versus angry deliveries (Actor 02). Notice the high-frequency harmonic energy dispersion (>4096 Hz) and sharp burst transitions in anger versus the subdued, parallel formant plateaus in calm speech.</em></figcaption>
+</figure>
+
+- **Calm Prosody:** Displays stable, low-frequency horizontal formant bands concentrated below 2,048 Hz, minimal upper-harmonic bleeding, and gradual vowel-decay slopes.
+- **Angry Arousal:** Features elevated pitch register ($f_0$ shifts), pronounced vocal fold constriction, dense harmonic energy spreading past 4,096 Hz, and sharper burst onsets.
+
+### Spatial Standardization & Pipeline Synchronization
+
+- **Uniform 2D Aperture (`128 x 128`):** Variable-duration audio trials were mapped into a fixed spatial grid of 128 Mel bands $\times$ 128 temporal frames (~2.97 seconds) via zero-padding or center-cropping. This is exactly what is needed for a 2D CNN network (after adding an additional channel dimension).
+- To ensure zero indexing drift across future modeling phases, compound target labels (`f"{gender}_{emotion}"`) and trial metadata arrays (`actor_ids`, `genders`, `emotions`) were serialized directly alongside the input arrays into `04_spectrogram_tensors.npz` (46.91 MB compressed), producing a final modeling tensor $X$ of shape `(1440, 128, 128, 1)`.
+
+> *For the complete implementation, padding logic, and signal sanity checks, refer to [`notebooks/04_spectrogram_extraction.ipynb`](./notebooks/04_spectrogram_extraction.ipynb).*
+
 GOBU
 
 ## Setup & Installation Instructions
