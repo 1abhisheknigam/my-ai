@@ -307,7 +307,78 @@ The baseline performance ceiling of 38.67% directly verified earlier methodologi
 - *Phase 1 Milestone (Non-Linear Tabular Ceiling):* Evaluate a kernelized Support Vector Classifier (`SVC(kernel="rbf")`) on the existing 26-dimensional static tabular set to test whether non-linear boundary warping can resolve intra-gender confusion without temporal frames.
 - *Phase 2 Milestone (Deep 2D Spectral Representation):* Transition directly to fixed-length 2D Log-Mel spectrogram arrays input into a 2D Convolutional Neural Network (CNN). Preserving time-frequency geometry enables convolutional filters to detect prosodic pacing and pitch contours, providing the representational depth needed to target the 50% to 60%+ emotion classification goal on unseen speakers.
 
+## Phase 3: Non-Linear Tabular Modeling & Kernelized Boundaries (RBF-SVC)
 
+Following the linear baseline ceiling discovered in Phase 2 (~38.8%), Phase 3 investigated whether warping static acoustic features into a non-linear Hilbert space could untangle intra-gender emotional overlap without requiring temporal frame modeling.
+
+### Validation Scheme & Model Architecture
+
+- **Zero-Leakage Speaker Grouping:** Identical to Phase 2, evaluation followed a 5-fold `StratifiedGroupKFold` protocol partitioned strictly by `actor_id` (`shuffle=False`), guaranteeing that the 4 to 5 validation actors per fold (~288 trials) were completely unseen during training.
+- **Kernel Projection Pipeline:** An end-to-end `Pipeline` coupling `StandardScaler` with a radial basis function Support Vector Classifier (`SVC(kernel="rbf", probability=True, random_state=42)`). The RBF kernel computes local Euclidean distances between 26-dimensional static summary vectors ($\mu, \sigma$ across 13 MFCC bands), enabling the model to draw flexible, non-planar boundaries around clustered acoustic profiles.
+- **Out-of-Fold (OOF) Tracking:** Continuous class probability distributions and discrete predictions were accumulated strictly out-of-fold across all 1,440 recordings.
+
+### Benchmark Modeling Results
+
+| Model Index | Model Configuration | Feature Space | Out-of-Fold Accuracy | Macro F1 | Weighted F1 | Fit Time (s) |
+| :---: | :--- | :--- | :---: | :---: | :---: | :---: |
+| **B2** | LogisticRegression (L2 Baseline) | 26 Scaled MFCC Summaries | 38.82% | 0.3805 | 0.3821 | ~0.18 |
+| **M1** | Support Vector Classifier (RBF Kernel) | 26 Scaled MFCC Summaries | **43.13%** | **0.4110** | **0.4132** | ~1.42 |
+
+<!-- Class-wise F1 Bar Chart across 16 Categories (SVC) -->
+<figure align="center">
+  <img src="outputs/plots/03_svc_class_recall_scores.png" alt="Class-wise F1 Scores: RBF-SVC Model" width="850">
+  <figcaption><em>Fig: Out-of-fold F1-scores across all 16 joint gender-emotion categories evaluated using RBF-SVC on unseen speakers.</em></figcaption>
+</figure>
+
+### Sub-Task Decoupling: Gender vs. Emotion
+
+Collapsing the 16 joint categories into independent binary gender and 8-class emotional dimensions demonstrates the performance shift introduced by non-linear kernel projection:
+
+<!-- Prediction Outcome Breakdown: RBF-SVC Decomposition -->
+<figure align="center">
+  <img src="outputs/plots/03_svc_gender_confusion.png" alt="RBF-SVC Prediction Outcome Breakdown" width="850">
+  <figcaption><em>Fig: Prediction outcome decomposition illustrating high binary gender separation (95.49%) and intra-gender affective resolution.</em></figcaption>
+</figure>
+
+- **Gender Disentanglement (95.49% Accuracy, 0.9547 Macro F1):** Cross-gender classification errors dropped to just **4.51%**. The RBF kernel locked cleanly onto the static fundamental frequency ($f_0$) energy shelves separating biological male and female speakers across all vocal intensities.
+- **Decoupled Emotion Classification (44.37% Accuracy, 0.4285 Macro F1):** An absolute gain of **+3.61%** over regularized logistic regression (40.76%). By warping feature space locally, RBF-SVC formed non-linear boundaries that separated low-energy states (*neutral* vs. *sad*) without collapsing into high-energy clusters.
+
+### Detailed Out-of-Fold Classification Report
+
+The full 16-class performance breakdown highlights distinct class-level behaviors across genders and affective intensities:
+
+| Class Target | Precision | Recall | F1-Score | Support | Class Profile |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **F_angry** | 0.5900 | 0.6146 | **0.6020** | 96 | High-arousal burst; robust upper-cepstral separation |
+| **F_calm** | 0.4922 | 0.6562 | **0.5625** | 96 | Low-energy plateau; high recall against neutral |
+| **F_disgust** | 0.3710 | 0.4792 | 0.4182 | 96 | Formant downward shift; partial overlap with sadness |
+| **F_fearful** | 0.4065 | 0.5208 | 0.4566 | 96 | High-energy variance; acoustic confusion with surprise |
+| **F_happy** | 0.5616 | 0.4271 | 0.4852 | 96 | Elevated pitch ceiling; misclassified as angry/surprised |
+| **F_neutral** | 0.4762 | 0.2083 | 0.2899 | 48 | Half-support class; suppressed recall due to calm boundary |
+| **F_sad** | 0.3187 | 0.3021 | 0.3102 | 96 | Flat envelope; confused with neutral and calm |
+| **F_surprised** | 0.4035 | 0.2396 | 0.3007 | 96 | Sharp transient attacks; low recall against happy/fear |
+| **M_angry** | 0.5859 | 0.6042 | **0.5949** | 96 | Pronounced vocal tract constriction and energy |
+| **M_calm** | 0.4649 | 0.5521 | **0.5048** | 96 | Controlled prosody; broad non-linear cluster |
+| **M_disgust** | 0.4444 | 0.5833 | **0.5045** | 96 | Glottal friction patterns; clean precision relative to linear baseline |
+| **M_fearful** | 0.3883 | 0.4167 | 0.4020 | 96 | Elevated pitch inflection; overlaps with male surprise |
+| **M_happy** | 0.3673 | 0.3750 | 0.3711 | 96 | Valence confusion with high-arousal male targets |
+| **M_neutral** | 0.3103 | 0.1875 | 0.2338 | 48 | Half-support class; high precision-to-recall penalty |
+| **M_sad** | 0.3736 | 0.3542 | 0.3636 | 96 | Depressed spectral tilt; overlaps with male calm/neutral |
+| **M_surprised** | 0.2222 | 0.1458 | **0.1761** | 96 | Worst-performing class; static features miss pitch contour |
+| **Macro Avg** | **0.4235** | **0.4167** | **0.4110** | **1440** | Unweighted across all 16 target partitions |
+| **Weighted Avg** | **0.4256** | **0.4313** | **0.4209** | **1440** | Factoring single neutral trial support (48 vs. 96) |
+
+- **The Neutral-Calm Suppression Effect:** Both `F_neutral` (recall: 0.2083) and `M_neutral` (recall: 0.1875) exhibit severe recall collapse. Because neutral speech contains only 48 samples per gender (single statement takes) and shares depressed spectral energy with calm speech, the RBF decision boundary defaults toward the higher-support `calm` prior.
+- **The Surprise Generalization Failure:** `M_surprised` achieved the lowest overall score across all classes (0.1761 F1; recall: 0.1458). A static mean and standard deviation cannot distinguish sudden terminal pitch rises (surprise) from sustained vocal constriction (anger) or dynamic pitch modulation (happiness) in male voices.
+- **Valence Blindness Across Matched Arousal:** While the RBF kernel easily separates low-energy from high-energy vocalizations, it cannot separate affective *valence* (e.g., positive `happy` vs. negative `angry` or shock `fearful`). Differentiating valence requires tracking directional pitch slopes and vowel duration over time.
+
+### Non-Linear Tabular Takeaways
+
+RBF-SVC delivered the benchmark champion at **43.13%**, proving that 26-dimensional summary statistics ($\mu, \sigma$) provide strong regularizing priors on small datasets. However, it had patters just like the LogsticRegression model; low recall on `surprised` and `neutral` confirms that static aggregation fundamentally discards temporal pacing and pitch contour.
+
+Now, it is time to turn from 1D static descriptors to 2D time-frequency representations (Log-Mel spectrograms) capable of preserving both spectral harmonics and temporal duration, to try and break that 44% barrier.
+
+GOBU
 
 ## Setup & Installation Instructions
 
