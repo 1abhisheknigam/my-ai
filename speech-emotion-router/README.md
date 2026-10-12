@@ -172,29 +172,26 @@ To evaluate the predictive ceiling of static acoustic features on speaker-indepe
 ### Diagnostic Findings & Error Auditing
 
 <!-- Class-wise F1 Bar Chart across 16 Categories -->
-<div align="center">
-
-![Class-wise F1 Scores: Baseline Model](outputs/plots/02_baseline_class_f1_scores.png)
-
-</div>
+<figure align="center">
+  <img src="outputs/plots/02_baseline_class_f1_scores.png" alt="Class-wise F1 Scores: Baseline Model" width="850">
+  <figcaption><em>Figure 1: Out-of-fold F1-scores across all 16 joint gender-emotion categories evaluated using 5-fold StratifiedGroupKFold on unseen speakers.</em></figcaption>
+</figure>
 
 <!-- Out-of-Fold 16-Class Confusion Matrix -->
-<div align="center">
-
-![Confusion Matrix: Logistic Regression Baseline](outputs/plots/02_baseline_confusion_matrix.png)
-
-</div>
+<figure align="center">
+  <img src="outputs/plots/02_baseline_confusion_matrix.png" alt="Confusion Matrix: Logistic Regression Baseline" width="850">
+  <figcaption><em>Figure 2: Normalized out-of-fold confusion matrix for the L2-regularized logistic regression baseline across 1,440 speech trials.</em></figcaption>
+</figure>
 
 ### Gender Disentanglement Audit
 
 Collapsing the 16-class predictions into binary speaker gender reveals where the linear model succeeds and where it fails:
 
 <!-- Prediction Outcome Breakdown: Exact Match vs Intra-Gender vs Cross-Gender -->
-<div align="center">
-
-![Baseline Prediction Outcome Breakdown](outputs/plots/02_baseline_gender_confusion.png)
-
-</div>
+<figure align="center">
+  <img src="outputs/plots/02_baseline_gender_confusion.png" alt="Baseline Prediction Outcome Breakdown" width="850">
+  <figcaption><em>Figure 3: Prediction outcome decomposition illustrating high binary gender separation (~94.5%) alongside dominant intra-gender valence confusion (>55%).</em></figcaption>
+</figure>
 
 - **Linear Gender Separability:** The regularized logistic regression baseline achieves approximately 94.5% binary gender accuracy on unseen speakers. Cross-gender classification errors represent only ~5.5% of total predictions. Fundamental frequency shifts and spectral tilt captured by static MFCC means provide strong linear separability across biological sex.
 
