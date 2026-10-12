@@ -73,16 +73,23 @@ To set up your local development environment for exploratory data analysis and b
     ```bash
     pip install --upgrade pip
     pip install \
+      # Core data manipulation & numerical computing
       numpy \
       pandas \
+      # Data visualization
       matplotlib \
       seaborn \
-      scikit-learn \
+      # Audio I/O & digital signal processing
       librosa \
       soundfile \
-      ipykernel \
+      # Machine learning & modeling
+      scikit-learn \
+      # High-performance columnar storage
       pyarrow \
-      fastparquet
+      fastparquet \
+      # Interactive utilities & progress bars
+      ipykernel \
+      tqdm
     ```
 
 5. **Launch Jupyter Lab or VS Code:**
