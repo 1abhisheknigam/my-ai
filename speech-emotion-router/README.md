@@ -36,16 +36,42 @@ While the broader architectural goal is designed to generalize across North Amer
 - Lead/trail silence trimming via logarithmic decibel calibration (`top_db=25`).
 - Hardware cleanliness checks: DC offset drift, digital clipping, and peak amplitude verification.
 - Duration variance and outlier analysis across statements, vocal intensities, and emotional categories.
-- Frame-level 13-band MFCC extraction and static tabular aggregation (mean and standard deviation).
+- Frame-level 13-band MFCC extraction and static tabular aggregation (26-dimensional mean and standard deviation).
 
 ### 3. *Baseline Modeling & Error Diagnostics*
 
 &emsp;&emsp;[`notebooks/02_baseline_modeling.ipynb`](./notebooks/02_baseline_modeling.ipynb)
 
 - Leak-free 5-fold `StratifiedGroupKFold` cross-validation grouped strictly by actor ID.
-- Empirical heuristic baseline (`DummyClassifier` ~6.7%) and regularized linear baseline (`LogisticRegression` 38.67%).
+- Empirical heuristic baseline (`DummyClassifier` ~6.25%) and regularized linear baseline (`LogisticRegression` 38.82%).
 - Confusion matrix error auditing demonstrating gender disentanglement vs. intra-gender acoustic confusion.
 - Serialization of fitted baseline pipelines and out-of-fold predictions to checkpointed artifacts.
+
+### 4. *Non-Linear Tabular Modeling & Support Vector Machines*
+
+&emsp;&emsp;[`notebooks/03_svc_modeling.ipynb`](./notebooks/03_svc_modeling.ipynb)
+
+- Non-linear boundary projection via kernelized Support Vector Classification (`SVC` with RBF kernel).
+- Evaluation under identical 5-fold speaker-partitioned splits, reaching **43.13%** 16-class compound accuracy.
+- Out-of-fold probability calibration and error analysis across acoustically adjacent emotional pairs.
+- Serialization of Phase 03 evaluation artifacts (`03_1_svc_evaluation_bundle.joblib`).
+
+### 5. *Spectral Representation & 2D Tensor Engineering*
+
+&emsp;&emsp;[`notebooks/04_spectrogram_extraction.ipynb`](./notebooks/04_spectrogram_extraction.ipynb)
+
+- Short-Time Fourier Transform (STFT) conversion to $128 \times 128$ Log-Mel spectrogram matrices.
+- Dynamic audio centering/padding and decibel scaling for convolutional visual inputs.
+- Target label alignment with compound identifiers (`f"{gender}_{emotion}"`) and serialization to compressed `.npz` archive (`04_spectrogram_tensors.npz`).
+
+### 6. *Deep Learning & 2D Convolutional Neural Network*
+
+&emsp;&emsp;[`notebooks/05_cnn.ipynb`](./notebooks/05_cnn.ipynb)
+
+- 2-block VGG convolutional architecture (`Conv2D` $\to$ `BatchNormalization` $\to$ `MaxPooling` $\to$ `GlobalAveragePooling2D`).
+- Out-of-fold cross-validation with `EarlyStopping` monitoring validation loss across unseen test actors.
+- Final cross-paradigm benchmark comparison against tabular baselines (30.07% compound accuracy, 87.22% gender separation).
+- Serialization of final OOF predictions and evaluation bundle (`05_cnn_evaluation_bundle.joblib`).
 
 ---
 
