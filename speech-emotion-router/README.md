@@ -346,12 +346,19 @@ This project utilizes the **RAVDESS** (Ryerson Audio-Visual Database of Emotiona
 - [WavePad Audio Concepts Guide](https://help.nchsoftware.com/help/en/wavepad/win/concepts.html): Technical definitions for DC offset, digital clipping thresholds, sample rates, and dynamic range.
 - [Listen2It Audio Cleanup Techniques](https://www.getlisten2it.com/blog/audio-cleanup-techniques-fix-noisy-recordings-like-a-pro): Practical guidelines on baseline noise evaluation, studio room tone, and non-destructive filtering.
 
-### Feature Engineering & Acoustic Representation
+### References & Attributions
 
-#### Implementation Guides & Code References
+#### Deep Learning & Spectrogram Architectures
 
-- [GeeksforGeeks: Mel-Frequency Cepstral Coefficients (MFCC) for Speech Recognition](https://www.geeksforgeeks.org/nlp/mel-frequency-cepstral-coefficients-mfcc-for-speech-recognition/): Mathematical breakdown of the Mel scale, filterbank projection, and DCT decorrelation
-  
+- [GeeksforGeeks: VGG Net Architecture Explained](https://www.geeksforgeeks.org/computer-vision/vgg-net-architecture-explained/): Architectural breakdown of modular $3 \times 3$ convolutional blocks, progressive channel doubling, and max-pooling hierarchies adapted for our 2-block audio CNN.
+- [Towards Data Science: CNNs for Audio Classification](https://towardsdatascience.com/cnns-for-audio-classification-6244954665ab): Practical paradigms for treating 2D Log-Mel spectrograms as single-channel imagery and designing spatial filter pipelines for acoustic classification.
+- [Kaggle: Audio Emotion Part 3 - Baseline Model (ejlok1)](https://www.kaggle.com/code/ejlok1/audio-emotion-part-3-baseline-model#Part-3---Baseline-model): Baseline implementation patterns for deep learning workflows and multi-class target encoding on the RAVDESS dataset.
+
+---
+
+#### Feature Engineering & Acoustic Representation
+
+- [GeeksforGeeks: Mel-Frequency Cepstral Coefficients (MFCC) for Speech Recognition](https://www.geeksforgeeks.org/nlp/mel-frequency-cepstral-coefficients-mfcc-for-speech-recognition/): Mathematical breakdown of the Mel scale, filterbank projection, and DCT decorrelation.
 - [Medium: The Dummy's Guide to MFCC](https://medium.com/prathena/the-dummys-guide-to-mfcc-aceab2450fd): Intuitive overview of frequency warping and cepstral analysis for acoustic feature extraction.
 - [GitHub Gist: Extracting and Visualizing MFCCs with Librosa](https://gist.github.com/stevemclaugh/80f192130852353ad53e6d8b6b275983): Practical code patterns for computing frame-level spectrograms and feature arrays using `librosa`.
 
@@ -360,9 +367,6 @@ This project utilizes the **RAVDESS** (Ryerson Audio-Visual Database of Emotiona
 #### Academic & Foundational Literature
 
 - **Huang, X., Acero, A., & Hon, H.-W. (2001).** *Spoken Language Processing: A Guide to Theory, Algorithm, and System Development*. Prentice Hall PTR. (Filter bank design, STFT parameterization, and acoustic-phonetic feature extraction).
-  
 - **Livingstone, S. R., & Russo, F. A. (2018).** The Ryerson Audio-Visual Database of Emotional Speech and Song (RAVDESS): A dynamic, multimodal set of facial and vocal expressions in North American English. *PLOS ONE*, 13(5), e0196391. https://doi.org/10.1371/journal.pone.0196391
-  
 - **Schuller, B. W. (2018).** Speech emotion recognition: Two decades in a nutshell, benchmarks, and ongoing trends. *Communications of the ACM*, 61(5), 90–99. https://doi.org/10.1145/3129340 (Benchmarking spatial-temporal speech representations vs. static acoustics).
-  
-- **Stevens, S. S., Volkmann, J., & Newman, E. B. (1937).** A scale for the measurement of the psychological magnitude pitch. *The Journal of the Acoustical Society of America*, 8(3), 185–190. https://doi.org/10.1121/1.1915893 (Foundational derivation of the non-linear perceptual Mel scale)
+- **Stevens, S. S., Volkmann, J., & Newman, E. B. (1937).** A scale for the measurement of the psychological magnitude pitch. *The Journal of the Acoustical Society of America*, 8(3), 185–190. https://doi.org/10.1121/1.1915893 (Foundational derivation of the non-linear perceptual Mel scale).
