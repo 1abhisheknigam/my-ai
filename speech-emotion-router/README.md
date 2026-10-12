@@ -112,7 +112,7 @@ While the broader architectural goal is designed to generalize across North Amer
 └── .gitignore                                       # Repository exclusions
 ```
 
-## Data Cleaning & Acoustic Exploratory Data Analysis (EDA)
+## Phase 0 and 1: Data Cleaning & Acoustic Exploratory Data Analysis (EDA)
 
 The speech corpus under initial analysis contains 1,440 recordings across 24 professional actors (12 male, 12 female) vocalizing two standardized statements under controlled recording studio conditions.
 
@@ -160,7 +160,7 @@ Auditing the trimmed duration distributions across dataset facets provided empir
 
 - **Outlier Retention Verdict:** Because prolonged trials reflected genuine vocal expressions rather than recording corruption or silence trimming errors, all 1,440 trials were kept without artificial truncation or row dropping.
 
-## Feature Extraction & Engineering
+## Phase 1: Feature Extraction & Engineering
 
 Converting raw audio waveforms into model-ready numerical inputs requires capturing spectral energy distributions without carrying background room noise or allowing identity leakage.
 
@@ -228,11 +228,10 @@ Evaluating these engineered features led to two core structural modeling choices
 - **Strict Speaker-Partitioned Validation (Group K-Fold):** Random train-test splits introduce severe leakage because an individual speaker's vocal tract geometry and pitch baseline appear in both splits. To guarantee the model evaluates generalized emotion recognition rather than speaker memorization, all cross-validation folds are partitioned strictly by Actor ID, paired with an in-pipeline `StandardScaler` fit exclusively on training splits.
 
 - **Two-Phase Modeling Strategy:**
-
   - *Phase 1 (Tabular Acoustic Baseline):* Benchmark classical models (Logistic Regression, Support Vector Classifiers) on the compact 26 static MFCC summary statistics to quantify linear gender separation and establish baseline emotion performance.
   - *Phase 2 (Deep Spectral Representation):* Transition to uncollapsed 2D Log-Mel spectrogram arrays paired with a 2D Convolutional Neural Network (CNN). Unlike flattened tabular models, CNN kernels leverage weight sharing and local receptive fields to capture dynamic pitch inflections, cadence, and pauses across time and frequency without exploding parameters.
 
-## Baseline Modeling, Diagnostic Results & Two-Phase Strategy
+## Phase 2: Baseline Modeling, Diagnostic Results & Two-Phase Strategy
 
 To evaluate the predictive ceiling of static acoustic features on speaker-independent affective classification, an empirical heuristic baseline and a regularized linear model were trained and audited across identical partitions.
 
@@ -306,7 +305,9 @@ The baseline performance ceiling of 38.67% directly verified earlier methodologi
 - **Pivot to the Two-Phase Architecture:**
 
 - *Phase 1 Milestone (Non-Linear Tabular Ceiling):* Evaluate a kernelized Support Vector Classifier (`SVC(kernel="rbf")`) on the existing 26-dimensional static tabular set to test whether non-linear boundary warping can resolve intra-gender confusion without temporal frames.
-  - *Phase 2 Milestone (Deep 2D Spectral Representation):* Transition directly to fixed-length 2D Log-Mel spectrogram arrays input into a 2D Convolutional Neural Network (CNN). Preserving time-frequency geometry enables convolutional filters to detect prosodic pacing and pitch contours, providing the representational depth needed to target the 50% to 60%+ emotion classification goal on unseen speakers.
+- *Phase 2 Milestone (Deep 2D Spectral Representation):* Transition directly to fixed-length 2D Log-Mel spectrogram arrays input into a 2D Convolutional Neural Network (CNN). Preserving time-frequency geometry enables convolutional filters to detect prosodic pacing and pitch contours, providing the representational depth needed to target the 50% to 60%+ emotion classification goal on unseen speakers.
+
+
 
 ## Setup & Installation Instructions
 
