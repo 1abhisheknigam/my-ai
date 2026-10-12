@@ -103,6 +103,13 @@ Analysis of raw waveform timing revealed substantial leading and trailing studio
 
 - **Silence Proportion:** Studio buffer silence accounted for an average of 53.2% of raw file duration (roughly 1.0s of non-speech per clip).
 - **Decibel Threshold Calibration:** Calibrated a -25 dB silence floor (`top_db=25`) using `librosa.effects.trim` to strip lead and trail buffers without clipping quiet consonant onsets.
+
+<!-- WhiteSpace Audio Extract -->
+<figure align="center">
+  <img src="outputs/plots/01_whitespace_trim.png" alt="Extracted Audio using Whitespace Trimming" width="850">
+  <figcaption><em>Fig: Extracted Audio using Whitespace Trimming</em></figcaption>
+</figure>
+
 - **Active Utterance Isolation:** Trimming reduced average clip duration to an active speech mean of 1.74s, removing non-informative ambient room noise from downstream feature extractions.
 
 ### Duration & Outlier Analysis
@@ -111,6 +118,13 @@ Auditing the trimmed duration distributions across dataset facets provided empir
 
 - **Lexical & Gender Invariance:** Statement length and actor gender showed no statistically meaningful duration differences.
 - **Emotional Modulation:** Duration variance was driven primarily by emotional state and vocal intensity (such as drawn-out vowels in sad and calm states versus rapid bursts in angry states).
+
+<!-- Out-of-Fold 16-Class Confusion Matrix -->
+<figure align="center">
+  <img src="outputs/plots/01_post_trim_distribution_gender+emotion.png" alt="Extracted Audio using Whitespace Trimming" width="850">
+  <figcaption><em>Fig: Complete Audio Distribution Post-Trim</em></figcaption>
+</figure>
+
 - **Outlier Retention Verdict:** Because prolonged trials reflected genuine vocal expressions rather than recording corruption or silence trimming errors, all 1,440 trials were kept without artificial truncation or row dropping.
 
 ## Feature Extraction & Engineering
@@ -126,6 +140,41 @@ Mel-Frequency Cepstral Coefficients (MFCCs) serve as the primary acoustic featur
 - **Short-Time Spectral Decomposition:** Applied a Short-Time Fourier Transform (STFT) with a 2,048-sample window length and a 512-sample hop length (75% frame overlap) across the trimmed active speech.
 
 - **Mel Filterbank Projection:** Projected power spectrograms onto 13 discrete Mel-frequency bands, applying discrete cosine transformation (DCT) to decorrelate filterbank energies into 13 dynamic MFCC contours.
+
+- **Acoustic Semantic Mapping:** Rather than treating coefficients as black-box numbers, each cepstral index maps directly to physical acoustic properties of speech production:
+  - **C_0 (Log Energy / Loudness):** Overall signal energy and vocal volume.
+  - **C_1 (Macro Spectral Tilt):** Ratio of low-to-high frequency power, reflecting vocal brightness or breathiness.
+  - **C_2 to C_3 (Vocal Tract Resonances):** Low and mid formant locations shaped by tongue height, jaw opening, and biological vocal tract length.
+  - **C_4 to C_9 (Formant Textures & Harmonics):** Rich harmonic structures that capture timbre, nasal resonance, and vocal tract constriction.
+  - **C_10 to C_12 (Fine Spectral Envelopes):** Upper-frequency spectral detail, consonant friction, and micro-prosody.
+
+#### Empirical Cross-Gender MFCC Profiling
+
+To ground these acoustic meanings in empirical data, spot-auditing matched speech trials across male and female vocalizations reveals substantial baseline shifts driven by biological vocal tract geometry:
+
+| Coefficient | Acoustic Meaning | Actor 17 (Male) | Actor 18 (Female) |
+| :---: | :--- | :---: | :---: |
+| **C_0** | Energy / Loudness | -379.13 | -460.80 |
+| **C_1** | Macro Tilt | 107.40 | 99.49 |
+| **C_2** | Low Resonance | -15.97 | -32.34 |
+| **C_3** | Mid Resonance | 20.16 | 11.03 |
+| **C_4** | Texture | -1.86 | -26.59 |
+| **C_5** | Texture | 20.68 | 8.10 |
+| **C_6** | Texture | -5.70 | -27.12 |
+| **C_7** | Texture | 6.25 | -9.00 |
+| **C_8** | Texture | -5.90 | -15.42 |
+| **C_9** | Texture | -2.07 | -19.95 |
+| **C_10** | Fine Shape | -11.20 | -17.91 |
+| **C_11** | Fine Shape | 1.07 | -3.96 |
+| **C_12** | Fine Shape | 3.57 | -5.32 |
+
+- **Gender Separation Mechanism:** Lower coefficients (particularly C_2 through C_6) exhibit marked mean divergence between male and female speakers (e.g., C_4 shifting from -1.86 to -26.59, and C_6 from -5.70 to -27.12). Shorter female vocal tract lengths shift formant resonances upward, producing distinct cepstral signatures that explain why linear models achieve ~94.5% gender separation.
+
+<!-- Placeholder: Cross-Emotion & Cross-Gender MFCC Dynamic Comparison (Actor 22 vs Actor 23) -->
+<figure align="center">
+  <img src="outputs/plots/01_mfcc_comparison_fearful.png" alt="MFCC Comparison: Actor 22 vs Actor 23" width="850">
+  <figcaption><em>Fig: Dynamic 13-band MFCC spectrogram comparison and cepstral trajectory audit across male and female speakers expressing matched strong affective states.</em></figcaption>
+</figure>
 
 ### Tabular Dimensionality Reduction: Mean & Standard Deviation
 
@@ -174,13 +223,13 @@ To evaluate the predictive ceiling of static acoustic features on speaker-indepe
 <!-- Class-wise F1 Bar Chart across 16 Categories -->
 <figure align="center">
   <img src="outputs/plots/02_baseline_class_f1_scores.png" alt="Class-wise F1 Scores: Baseline Model" width="850">
-  <figcaption><em>Figure 1: Out-of-fold F1-scores across all 16 joint gender-emotion categories evaluated using 5-fold StratifiedGroupKFold on unseen speakers.</em></figcaption>
+  <figcaption><em>Fig: Out-of-fold F1-scores across all 16 joint gender-emotion categories evaluated using 5-fold StratifiedGroupKFold on unseen speakers.</em></figcaption>
 </figure>
 
 <!-- Out-of-Fold 16-Class Confusion Matrix -->
 <figure align="center">
   <img src="outputs/plots/02_baseline_confusion_matrix.png" alt="Confusion Matrix: Logistic Regression Baseline" width="850">
-  <figcaption><em>Figure 2: Normalized out-of-fold confusion matrix for the L2-regularized logistic regression baseline across 1,440 speech trials.</em></figcaption>
+  <figcaption><em>Fig: Normalized out-of-fold confusion matrix for the L2-regularized logistic regression baseline across 1,440 speech trials.</em></figcaption>
 </figure>
 
 ### Gender Disentanglement Audit
@@ -190,7 +239,7 @@ Collapsing the 16-class predictions into binary speaker gender reveals where the
 <!-- Prediction Outcome Breakdown: Exact Match vs Intra-Gender vs Cross-Gender -->
 <figure align="center">
   <img src="outputs/plots/02_baseline_gender_confusion.png" alt="Baseline Prediction Outcome Breakdown" width="850">
-  <figcaption><em>Figure 3: Prediction outcome decomposition illustrating high binary gender separation (~94.5%) alongside dominant intra-gender valence confusion (>55%).</em></figcaption>
+  <figcaption><em>Fig: Prediction outcome decomposition illustrating high binary gender separation (~94.5%) alongside dominant intra-gender valence confusion (>55%).</em></figcaption>
 </figure>
 
 - **Linear Gender Separability:** The regularized logistic regression baseline achieves approximately 94.5% binary gender accuracy on unseen speakers. Cross-gender classification errors represent only ~5.5% of total predictions. Fundamental frequency shifts and spectral tilt captured by static MFCC means provide strong linear separability across biological sex.
