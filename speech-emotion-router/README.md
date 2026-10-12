@@ -336,7 +336,7 @@ Collapsing the 16 joint categories into independent binary gender and 8-class em
 
 <!-- Prediction Outcome Breakdown: RBF-SVC Decomposition -->
 <figure align="center">
-  <img src="outputs/plots/03_svc_gender_confusion.png" alt="RBF-SVC Prediction Outcome Breakdown" width="850">
+  <img src="outputs/plots/03_svc_gender_confusion_matrix.png" alt="RBF-SVC Prediction Outcome Breakdown" width="850">
   <figcaption><em>Fig: Prediction outcome decomposition illustrating high binary gender separation (95.49%) and intra-gender affective resolution.</em></figcaption>
 </figure>
 
@@ -409,7 +409,160 @@ Unlike static MFCC summaries, 2D Log-Mel spectrograms directly preserve the visu
 
 > *For the complete implementation, padding logic, and signal sanity checks, refer to [`notebooks/04_spectrogram_extraction.ipynb`](./notebooks/04_spectrogram_extraction.ipynb).*
 
-GOBU
+## Phase 5: Deep 2D Convolutional Neural Network (VGG-Style)
+
+Phase 5 tested whether an end-to-end 2D Convolutional Neural Network trained directly on raw $(128, 128, 1)$ Log-Mel spectrograms could learn localized spatial-temporal acoustic features (formant trajectories, energy bursts, harmonic spacing) without manual feature engineering.
+
+### Architecture & Parameter Efficiency
+
+To try and avoid severe overfitting on a 1,440-sample cohort, a compact 2-block VGG architecture was constructed, utilizing only **19,856 trainable parameters**:
+
+* **Block 1 (Low-Level Edge & Pitch Detection):** `Conv2D(16, (3, 3), padding="same")` $\to$ `BatchNormalization` $\to$ `ReLU` $\to$ `MaxPooling2D(2, 2)` $\to$ `Dropout(0.25)`. Compresses the input to $(64, 64, 16)$.
+* **Block 2 (Mid-Level Harmonic Combinations):** `Conv2D(32, (3, 3), padding="same")` $\to$ `BatchNormalization` $\to$ `ReLU` $\to$ `MaxPooling2D(2, 2)` $\to$ `Dropout(0.25)`. Yields feature maps of shape $(32, 32, 32)$.
+* **Spatial Aggregation & Classification Head:** `GlobalAveragePooling2D()` collapses spatial dimensions into a 32-dimensional vector $\to$ `Dense(64, activation="relu")` $\to$ `Dropout(0.40)` $\to$ `Dense(16, activation="softmax")`.
+
+Using Global Average Pooling (GAP) instead of a flattened dense layer eliminated over 200,000 potential weights, enforcing translation-invariant acoustic detection while keeping the model parameter-efficient.
+
+### Out-of-Fold Cross-Validation Dynamics
+
+- Just like before, this model was also evaluated across identical 5-fold `StratifiedGroupKFold` splits on `actor_id` (`shuffle=False`), guaranteeing that validation actors (~288 trials per fold) were completely unseen during training. To ensure weights were not continuously updated, a fresh CNN was created for every fold.
+- Models were optimized using Adam (`lr=1e-3`, batch size 32) with `EarlyStopping(monitor="val_loss", patience=8, restore_best_weights=True)`. Across all folds, validation loss reached its optimum between epochs 12 and 20, halting before filters memorized individual speaker vocal tract formants.
+- Unbiased predictions were written directly to `oof_preds[val_idx]` to construct a synchronized 1,440-sample evaluation tensor.
+
+### Empirical Performance Summary
+
+| Evaluation Dimension | Out-of-Fold Accuracy | Macro F1 | Weighted F1 | Chance Baseline |
+| :--- | :---: | :---: | :---: | :---: |
+| **Compound 16-Class** | **30.07%** (0.3007) | **0.2464** | **0.2567** | 6.25% ($1/16$) |
+| **Decoupled Binary Gender** | **87.22%** (0.8722) | **0.8711** | — | 50.00% ($1/2$) |
+| **Decoupled 8-Class Emotion** | **34.31%** (0.3431) | **0.2981** | — | 12.50% ($1/8$) |
+
+### Key Diagnostic Takeaways
+
+1. Compound accuracy of **30.07%** outperforms random chance by **4.81x**, confirming that 2D spatial convolutions successfully extract discriminative features directly from raw spectrogram pixels without feature engineering
+2. Binary gender separation reached **87.22%**, as fundamental frequency ($f_0$) registers create prominent horizontal energy bands across lower Mel filterbanks. In contrast, 8-class emotion recognition reached **34.31%**, illustrating the difficulty of learning speaker-invariant prosodic cadence and pitch inflections from a limited training sample size (~1,152 trials per fold).
+3. The CNN underperformed tabular RBF-SVC (43.13%). With small acoustic datasets, hand-engineered summary statistics ($\mu, \sigma$) provide a constrained, lower-variance representation that outgeneralizes deep convolutional filters trained from scratch.
+
+> *All predictions, probabilities, and fold metrics were serialized to `data/processed/models/05_cnn_evaluation_bundle.joblib`. Full training code and fold history logs can be found in [`notebooks/05_cnn.ipynb`](./notebooks/05_cnn.ipynb).*
+
+## Final Performance: Cross-Paradigm Comparision
+
+Overall, I evaluated 5 distinct model pipelines:
+
+- A **`DummyClassifier`** establishing an empirical chance prior.
+- A baseline **`LogisticRegression`** model assuming linear decision boundaries.
+- Both an **untuned and tuned `SVC`** model leveraging non-linear Radial Basis Function (RBF) kernels.
+- A final deep learning **2D CNN** architecture trained on spatial acoustic tensors.
+
+All 5 models were evaluated across the complete set of 1,440 audio trials using strict, leak-free 5-fold `StratifiedGroupKFold` cross-validation grouped by held-out actors. Each pipeline ingested audio cleaned according to the exploratory data analysis (EDA) and acoustic hygiene audits. While Logistic Regression and the Support Vector Classifiers operated on aggregated summary statistics ($\mu, \sigma$) computed across 13 MFCC bands, the 2D CNN learned directly from spatial audio representations via 128×128 Log-Mel spectrograms.
+
+Here are the final results:
+
+<figure align="center">
+  <img src="outputs/plots/05_model_comparision_all.png" alt="Speech Emotion Recognition: 3-Way Milestone Comparison" width="850">
+  <figcaption><em>Fig: 3-way milestone comparison across regularized Logistic Regression, Tuned RBF-SVC, and 2D CNN. While binary gender separation converges strongly across all paradigms (~87–95%), affective emotion recognition reveals an empirical ceiling when training deep models from scratch on small cohorts.</em></figcaption>
+</figure>
+
+### Consolidated Milestone Benchmark Table
+
+| Milestone | Feature Representation | Model Architecture | Trainable Parameters | 16-Class Accuracy | Macro F1 | Gender Accuracy | Emotion Accuracy |
+| :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **00. Empirical Chance** | Class Frequencies | `DummyClassifier` (Stratified) | 0 | 6.25% | 0.0625 | 50.00% | 12.50% |
+| **01. Linear Baseline** | 26 Scaled MFCC Summaries ($\mu, \sigma$) | `StandardScaler` + `LogisticRegression` | ~432 weights | 38.82% | 0.3805 | 94.24% | 40.76% |
+| **02. Tabular Champion** | 26 Scaled MFCC Summaries ($\mu, \sigma$) | `StandardScaler` + `SVC(RBF)` | Non-parametric (SVs) | **43.13%** | **0.4110** | **95.49%** | **44.37%** |
+| **03. 2D Deep Learning** | $128 \times 128$ Log-Mel Spectrogram Grids | 2-Block VGG (`Conv2D` $\to$ GAP) | 19,856 weights | 30.07% | 0.2464 | 87.22% | 34.31% |
+
+---
+
+### Core Findings & Empirical Insights
+
+1. The tabular **RBF-SVC remained at the head of the pack, at 43.13%**. Compacting temporal frames into static 1st- and 2nd-order statistics ($\mu, \sigma$) serves as an aggressive regularizer.
+   - In contrast, training a 2D CNN from scratch requires thousands of weights to simultaneously learn edge filters, harmonic formants, and prosodic trajectories. With only ~1,152 training samples per fold across 19–20 actors, the CNN overfits to speaker-specific vocal tract textures before generalizable emotional filters converge.
+
+2. Across all paradigms, binary gender classification converges readily (**87.22% – 95.49%**) whereas independent emotion recognition plateaus (**34.31% – 44.37%**). Static pitch ($F_0%) differences between male and female vocal tracts produce large, continuous energy shelf offsets across lower Mel channels, while affective state is encoded in dynamic prosodic inflection and temporal cadence
+
+3. All three architectures **significantly exceed** uniform random chance of the DummyClassifier (6.25% compound, 12.50% emotion). Enforcing strict speaker grouping guarantees these scores reflect genuine acoustic generalization to novel human voices rather than inflated memorization from random train/test splits.
+
+## Conclusion & Looking to the Future
+
+### Answering the Core Research Objective
+
+This capstone set out to investigate a foundational affective computing question:
+
+> **Given an unconstrained audio voice sample, can a machine learning model reliably identify broad traits of the speaker—specifically biological sex and emotional state—approximating human perceptual accuracy?**
+
+To answer this without the performance inflation common in unstratified speech benchmarks, evaluation was anchored to an uncompromising standard: **zero identity leakage across completely unseen speakers** via 5-fold `StratifiedGroupKFold` partitioning across all 1,440 RAVDESS trials.
+
+Our empirical targets and final outcomes evaluate as follows:
+
+- **Target 1: Binary Gender Separation (>90.0% Accuracy)**  
+  **Result: Achieved.** Across all tabular and deep learning architectures, biological sex was identified with high precision: **94.24%** (Logistic Regression), **95.49%** (Tuned RBF-SVC), and **87.22%** (2D CNN). Static fundamental frequency ($f_0$) and lower-harmonic spacing create prominent energy shelves across the Mel scale, proving that vocal tract anatomy provides a strong, reliable acoustic signature that models separate easily even on novel voices.
+- **Target 2: Decoupled Multi-Class Emotion Recognition (50.0% – 60.0%+ Target)**  
+  **Result: Partial Convergence (~44.4% Peak).** Tabular RBF-SVC peaked at **44.37%** accuracy (0.4285 Macro F1), while the 2D CNN achieved **34.31%** (0.2981 Macro F1). While falling short of the ambitious 50–60% target, both models dramatically outperformed uniform random chance ($1/8 = 12.50\%$). The bottleneck was not arousal detection (distinguishing high vs. low vocal energy), but **valence resolution** (differentiating positive affect like *happy* from negative or shock affect like *angry* or *fearful*). Without explicit sequence modeling or pre-trained acoustic priors, models struggle to untangle matching energy envelopes on unseen speakers.
+
+---
+
+### Architectural Reflections & Proof-of-Concept Extensibility
+
+This project was engineered as a modular, leak-free proof-of-concept designed to be extended rather than a one-off experiment.
+
+1. **Acoustic Hygiene as a Foundation:**  
+   The signal processing foundations established in early audits (i.e. calibrated $-25\text{ dB}$ silence trimming, DC offset checks, peak digital clipping verification, and strict sampling rate enforcement) ensured downstream feature extraction ingested standardized, clean vocal waveforms. The identical preprocessing pipeline directly feeds both tabular aggregations and 2D Log-Mel matrices.
+2. The project revealed that on small cohorts (~1,152 training samples per fold across 19–20 actors), handcrafted inductive priors outperform end-to-end deep learning.
+
+   Compacting frame-level MFCCs into 1st- and 2nd-order summary statistics ($\mu, \sigma$) acts as a strong regularizer, allowing RBF-SVC to reach 43.13% compound accuracy.
+
+   The 2D CNN, while capturing localized spectrogram textures (30.07%), lacked the training diversity required to prevent its convolutional filters from overfitting to speaker-specific vocal tract textures.
+3. **The Data Scarcity Bottleneck:**  
+   Ultimately, model capacity was constrained by data volume and acoustic diversity. Professional actor corpora like RAVDESS provide clean, laboratory-grade acoustic baselines, but their limited sample sizes make it difficult to learn speaker-invariant emotional representations from scratch.
+
+---
+
+### Tiered Roadmap: Future Exploration & Scaling Scenarios
+
+Future technical enhancements can be prioritized across three pragmatic tiers based on tool availability, dataset access, and compute infrastructure:
+
+#### 1. Under Current Constraints (Same Hardware, Same Dataset)
+
+- **Evaluating Model Capacity vs. Data Scarcity:** While we could scale the CNN to deeper architectures with more trainable parameters (e.g., adding residual connections or widening channels from $32 \to 64 \to 128$), scaling capacity on our current setup will not solve the underlying bottleneck. Without more training variety, larger parameter sets accelerate speaker memorization and exacerbate overfitting on held-out actors.
+- **Dual-Paradigm Ensembling (Tuned RBF-SVC + 2D CNN):** Leverage the out-of-fold probability distributions already serialized in `03_1_svc_evaluation_bundle.joblib` and `05_cnn_evaluation_bundle.joblib` to construct a soft-voting or meta-learner ensemble. Blending the models ($P_{\text{ensemble}} = \alpha \cdot P_{\text{SVC}} + (1 - \alpha) \cdot P_{\text{CNN}}$) exploits the uncorrelated inductive biases: the RBF-SVC provides high-confidence global arousal boundaries from low-variance summary statistics, while the CNN provides localized spectral pattern recognition. This directly tests whether non-linear tabular stability and convolutional spatial filtering can patch each other's blind spots without requiring additional training data.
+- **Spectrogram Data Augmentation (SpecAugment):** Apply randomized time and frequency masking on mini-batches during training without modifying the underlying architecture. Occluding vertical time strips and horizontal frequency channels forces convolutional filters to rely on distributed acoustic indicators rather than memorizing individual vocal harmonic tracks. At the end of the day, we need more indicators of the *progression* of the audio tracks.
+- We could try concatenating the tabular MFCC summary statistics ($\mu, \sigma$) directly into the dense classification head alongside the Global Average Pooled spectrogram features, providing the network with both global acoustic priors and localized time-frequency patterns.
+
+#### 2. Under Expanded Data Access (Same Compute, Multi-Corpus Corpora)
+
+- **Multi-Corpus Ingestion & Label Harmonization:** Ingest open-access speech corpora such as **CREMA-D**, **TESS**, and **SAVEE** to scale the trial volume from 1,440 recordings to over 10,000+ samples. This requires building a unified harmonization schema that maps divergent emotion annotations into a canonical 6- or 8-class affective taxonomy.
+
+- **Linguistic, Accent & Demographic Diversity:** Expanding beyond RAVDESS introduces varied North American and British accents, broader vocal ranges, and varied actor age groups, strengthening model resilience against unseen acoustic profiles.
+
+- With larger sample sizes and richer metadata, I would like to **expand** the target variable space even further by attempting to predict speaker biological sex, estimated age bracket and emotional state concurrently. Some of this information like age is already in RAVDESS and TESS. I would like to see if other factors can also be predicted by the aggregate metrics, like gender was.
+
+#### 3. Under Unconstrained Resources (High-Compute Accelerators, Live Production)
+
+- **Self-Supervised Acoustic Foundations (Transfer Learning):** Replace training from scratch with frozen representations from foundational speech transformers (**Wav2Vec 2.0**, **HuBERT**, **WavLM**, or **Whisper encoder heads**). Pre-trained on tens of thousands of hours of speech, these models learn rich prosodic dynamics that lift speaker-independent emotion accuracy into the 65%–75%+ range.
+- **Real-Time Stream Processing & Live Audio Ingestion:**  My ideal vision was to have an interactive inference interface (e.g. Streamlit or FastAPI) capable of ingesting microphone streams or uploaded audio clips. Then, we could use streaming frame-buffering to classify speaker gender, estimated age, and mood dynamically in near-real time. I think that can be a very interesting long-term goal for this kind of project.
+
+---
+
+### Extensibility: Cross-Corpus Scaling & Live Inference Architecture
+
+The modular structure of this repository enables straightforward integration across data pipelines and inference interfaces:
+
+```text
+[Raw Audio Streams / Live Microphone Ingestion]
+  │
+  ├── Multi-Corpus Ingestion (RAVDESS + CREMA-D + TESS + SAVEE)
+  │     └── Label Harmonization Schema (Mapping 6-8 core affective states)
+  │
+  ├── Preprocessing & Signal Hygiene Engine (top_db=25 trimming, DC check)
+  │
+  ├── Multi-Task Trait Extractor
+  │     ├── Binary Gender Classification (95%+ Baseline)
+  │     ├── Demographics / Age Estimation (Continuous / Ordinal Regression)
+  │     └── Affective Emotion State (8-Class Valence & Arousal)
+  │
+  └── Real-Time Inference Interface (Streamlit UI / FastAPI Streaming Endpoint)
+```
 
 ## Setup & Installation Instructions
 
@@ -506,3 +659,7 @@ This project utilizes the **RAVDESS** (Ryerson Audio-Visual Database of Emotiona
 - **Livingstone, S. R., & Russo, F. A. (2018).** The Ryerson Audio-Visual Database of Emotional Speech and Song (RAVDESS): A dynamic, multimodal set of facial and vocal expressions in North American English. *PLOS ONE*, 13(5), e0196391. https://doi.org/10.1371/journal.pone.0196391
 - **Schuller, B. W. (2018).** Speech emotion recognition: Two decades in a nutshell, benchmarks, and ongoing trends. *Communications of the ACM*, 61(5), 90–99. https://doi.org/10.1145/3129340 (Benchmarking spatial-temporal speech representations vs. static acoustics).
 - **Stevens, S. S., Volkmann, J., & Newman, E. B. (1937).** A scale for the measurement of the psychological magnitude pitch. *The Journal of the Acoustical Society of America*, 8(3), 185–190. https://doi.org/10.1121/1.1915893 (Foundational derivation of the non-linear perceptual Mel scale).
+
+---
+
+### Thank you for reading!
