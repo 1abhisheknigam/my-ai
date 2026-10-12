@@ -3,16 +3,26 @@
 ```text
 capstone-project/
 ├── data/
-│   ├── raw/                      # Raw RAVDESS and CREMA-D audio archives
-│   └── processed/                # Processed feature matrices and train/test splits
+│   ├── processed/
+│   │   ├── 00_ravdess_metadata.csv                  # Parsed filename metadata
+│   │   ├── 01_1_df_metadata_with_duration.parquet   # Metadata with audio lengths
+│   │   ├── 01_2_duration_outliers_w_silence.parquet # Audited outliers with silence stats
+│   │   ├── 01_3_df_cleaned.parquet                  # Cleaned, verified dataset
+│   │   └── ser_features.parquet                     # Final 26-MFCC feature matrix
+│   └── raw/
+│       └── RAVDESS/                                 # [gitignored] Raw audio dataset
+│           ├── Audio_Speech_Actors_01-24/           # 24 actor speech folders (1,440 files)
+│           └── README.md                            # Dataset documentation
 ├── docs/
-│   └── 01_problem_scoping.pdf    # Final official capstone scoping document
+│   ├── 01_problem_scoping.pdf                       # Project scoping brief
+│   └── 02_problem_statement.pdf                     # Formal problem statement
 ├── notebooks/
-│   ├── .venv/                    # Local Python virtual environment
-│   └── 01_eda_baseline.ipynb     # Active EDA, feature engineering, and baseline models
-├── outputs/                      # Generated figures, evaluation plots, and artifacts
-├── .gitignore                    # Git tracking exclusions
-└── README.md                     # Project overview, installation, and data attribution
+│   ├── 00_metadata_eda.ipynb                        # Metadata distribution analysis
+│   └── 01_signal_eda_features.ipynb                 # Signal audit & MFCC extraction
+├── outputs/                                         # Plots, figures, and charts
+├── .gitignore                                       # Git tracking exclusions
+├── git-prefix.sh                                    # Git commit message hook
+└── README.md                                        # Project documentation
 ```
 
 ## Setup & Installation Instructions
