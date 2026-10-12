@@ -79,19 +79,23 @@ While the broader architectural goal is designed to generalize across North Amer
 
 ```text
 .
-├── README.md                                        # Executive overview, EDA audit, baseline benchmarks, and roadmap
+├── README.md                                        # Executive overview, benchmarks, and retrospective
 ├── data/
 │   ├── processed/
 │   │   ├── 00_ravdess_metadata.csv                  # Parsed filename metadata
-│   │   ├── 01_1_df_metadata_with_duration.parquet   # Metadata with audio lengths
-│   │   ├── 01_2_duration_outliers_w_silence.parquet # Audited outliers with silence stats
-│   │   ├── 01_3_df_cleaned.parquet                  # Cleaned, verified dataset
-│   │   ├── ser_features.parquet                     # Final 26-MFCC static tabular feature matrix
-│   │   └── models/
-│   │       └── 02_2_baseline_pipelines.joblib       # Serialized baseline models, OOF predictions, and CV metadata
+│   │   ├── 01_1_df_metadata_with_duration.parquet   # Audio lengths audit
+│   │   ├── 01_2_duration_outliers_w_silence.parquet # Outlier & silence audit
+│   │   ├── 01_3_df_cleaned.parquet                  # Cleaned trial dataset
+│   │   ├── ser_features.parquet                     # 26-MFCC tabular feature matrix
+│   │   ├── models/
+│   │   │   ├── 02_2_baseline_pipelines.joblib       # LR & Dummy OOF pipelines
+│   │   │   ├── 03_1_svc_evaluation_bundle.joblib   # RBF-SVC pipeline & OOF metrics
+│   │   │   └── 05_cnn_evaluation_bundle.joblib     # 2D CNN OOF predictions & metrics
+│   │   └── spectrograms/
+│   │       └── 04_spectrogram_tensors.npz           # 128x128 Log-Mel tensors (npz)
 │   └── raw/
 │       └── RAVDESS/                                 # [gitignored] Raw audio dataset
-│           ├── Audio_Speech_Actors_01-24/           # 24 actor speech folders (1,440 files)
+│           ├── Audio_Speech_Actors_01-24/           # 24 actor folders (1,440 files)
 │           └── README.md                            # Dataset documentation
 ├── docs/
 │   ├── 01_problem_scoping.pdf                       # Project scoping brief
@@ -99,10 +103,13 @@ While the broader architectural goal is designed to generalize across North Amer
 ├── notebooks/
 │   ├── 00_metadata_eda.ipynb                        # Metadata distribution analysis
 │   ├── 01_signal_eda_features.ipynb                 # Signal audit & MFCC extraction
-│   └── 02_baseline_modeling.ipynb                   # Baseline pipelines & error diagnostics
-├── outputs/                                         # Plots, figures, and confusion matrices
+│   ├── 02_baseline_modeling.ipynb                   # Linear baseline & error audits
+│   ├── 03_svc_modeling.ipynb                        # Kernelized RBF-SVC modeling
+│   ├── 04_spectrogram_extraction.ipynb              # Log-Mel 2D tensor generation
+│   └── 05_cnn.ipynb                                 # 2D CNN pipeline & final benchmark
+├── outputs/                                         # Evaluation plots & confusion matrices
 ├── git-prefix.sh                                    # Git commit message hook
-└── .gitignore                                       # Git tracking exclusions
+└── .gitignore                                       # Repository exclusions
 ```
 
 ## Data Cleaning & Acoustic Exploratory Data Analysis (EDA)
