@@ -540,7 +540,9 @@ Future technical enhancements can be prioritized across three pragmatic tiers ba
 #### 3. Under Unconstrained Resources (High-Compute Accelerators, Live Production)
 
 - **Self-Supervised Acoustic Foundations (Transfer Learning):** Replace training from scratch with frozen representations from foundational speech transformers (**Wav2Vec 2.0**, **HuBERT**, **WavLM**, or **Whisper encoder heads**). Pre-trained on tens of thousands of hours of speech, these models learn rich prosodic dynamics that lift speaker-independent emotion accuracy into the 65%–75%+ range.
-- **Real-Time Stream Processing & Live Audio Ingestion:**  My ideal vision was to have an interactive inference interface (e.g. Streamlit or FastAPI) capable of ingesting microphone streams or uploaded audio clips. Then, we could use streaming frame-buffering to classify speaker gender, estimated age, and mood dynamically in near-real time. I think that can be a very interesting long-term goal for this kind of project.
+- **Deployment of Real-Time Stream Processing & Live Audio Ingestion:**  My ideal vision was to have an interactive inference interface (e.g. Streamlit or FastAPI) capable of ingesting microphone streams or uploaded audio clips. Web applications could embed our models via the joblib bundles the way I have created them in various phases in this project.
+
+Then, we could use streaming frame-buffering to classify speaker gender, estimated age, and mood dynamically in near-real time. I think that can be a very interesting long-term goal for this kind of project.
 
 ---
 
